@@ -3,6 +3,7 @@
 
 int ileTestow = 0;
 int KONIEC = 0;
+char PUSTO[9] = { '\0','\0','\0','\0','\0','\0','\0','\0','\0' };
 
 struct TablicaMieszajaca
 {
@@ -67,18 +68,19 @@ void CircleTable::Zeruj(long klucz)		//Do debugu CZY NIE INDEX
 {
 	int index = Haszuj(klucz);
 
-	//if (index >= rozmiar){
-	//	return;
-	//}
+	if (index >= rozmiar){
+		return;
+	}
 
 	while (Tab[index].klucz != klucz){
 		index++;
 	}
 
 	Tab[index].klucz = 0;
-	for (int i = 0; i < 9; i++){
-		Tab[index].lancuch[i] = '\0';
-	}
+	Tab[index].lancuch[0] = '\0';
+	//for (int i = 0; i < 9; i++){
+	//	Tab[index].lancuch[i] = '\0';
+	//}
 	Tab[index].dane = false;
 	
 	return;
@@ -115,6 +117,7 @@ void CircleTable::add(long klucz, std::string znaki)
 
 	Tab[index].klucz = klucz;
 	Tab[index].dane = true;
+	//(std::string)Tab[index].lancuch = znaki;
 	for (int i = 0; (unsigned int)i < znaki.length(); i++)
 	{
 		Tab[index].lancuch[i] = znaki[i];
@@ -126,7 +129,7 @@ void CircleTable::add(long klucz, std::string znaki)
 
 int main() {
 	std::string tmp_1;
-	int tmp_2;
+	int tmp_2;				int nr = 0;
 	CircleTable Tabela;
 
 	std::cin >> tmp_2;
@@ -134,7 +137,7 @@ int main() {
 
 	while (KONIEC)
 	{
-		std::cin >> tmp_1;
+		std::cin >> tmp_1;//		std::cout << "\nNR" << ++nr;
 
 		if (tmp_1 == "size"){
 			std::cin >> tmp_2;
@@ -142,7 +145,8 @@ int main() {
 		} 
 		else if (tmp_1 == "stop") 
 		{
-			KONIEC--;
+			KONIEC--;	//kasowanie tablicy jest przy nowym size
+			//			std::cout << "\nKONIEC " << KONIEC;
 		} 
 		else if (tmp_1 == "print")  
 		{
