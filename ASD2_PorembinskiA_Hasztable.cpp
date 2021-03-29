@@ -17,7 +17,6 @@ class CircleTable
 public:
 	int rozmiar = 0;
 	TablicaMieszajaca* Tab = NULL;
-	//bool* pomocnicza = NULL;//moze by cdo wywalenia
 
 	CircleTable();
 	~CircleTable();
@@ -39,10 +38,8 @@ CircleTable::~CircleTable()
 {
 	if (rozmiar != 0) {
 		delete[] Tab;
-		//delete[] pomocnicza;
 	}
 	Tab = NULL;
-	//pomocnicza = NULL;
 }
 
 void CircleTable::SetRozmiar(int wielkosc)
@@ -53,7 +50,6 @@ void CircleTable::SetRozmiar(int wielkosc)
 	
 	rozmiar = wielkosc;
 	Tab = new TablicaMieszajaca[wielkosc];
-	//pomocnicza = new bool[wielkosc];
 
 	return;
 }
@@ -71,8 +67,12 @@ void CircleTable::Zeruj(long klucz)		//Do debugu CZY NIE INDEX
 	if (index >= rozmiar){
 		return;
 	}
+	
+	//if (!Tab[index].dane){
+	//	return;
+	//}
 
-	while (Tab[index].klucz != klucz){
+	while (Tab[index].klucz != klucz ){//&& Tab[index].dane){
 		index++;
 	}
 
@@ -95,7 +95,7 @@ void CircleTable::print()
 		}
 	}
 
-	std::cout << std::endl;
+	std::cout << "\n";
 	return;
 }
 
@@ -104,23 +104,31 @@ void CircleTable::add(long klucz, std::string znaki)
 	int index = Haszuj(klucz);
 	int orig_index = index;
 
+	if (index >= rozmiar){
+		return;
+	}
+
 	while (Tab[index].dane == true) {
-		index++;
+		index += 1;
 
 		if (index == orig_index) {	//czy wrocil skad przybyl
 			return;
 		}
-		if (index-1 == rozmiar) {	//zeby bylo przejscie
+		if (index == rozmiar) {	//zeby bylo przejscie
 			index = 0;
 		}
 	}
 
-	Tab[index].klucz = klucz;
-	Tab[index].dane = true;
-	//(std::string)Tab[index].lancuch = znaki;
-	for (int i = 0; (unsigned int)i < znaki.length(); i++)
-	{
-		Tab[index].lancuch[i] = znaki[i];
+	if (Tab[index].dane == false) {
+		Tab[index].klucz = klucz;
+		Tab[index].dane = true;
+
+		//DO DEBUGU
+		//(std::string)Tab[index].lancuch = znaki;
+		for (int i = 0; (unsigned int)i < znaki.length(); i++)
+		{
+			Tab[index].lancuch[i] = znaki[i];
+		}
 	}
 
 	return;
@@ -129,15 +137,15 @@ void CircleTable::add(long klucz, std::string znaki)
 
 int main() {
 	std::string tmp_1;
-	int tmp_2;				int nr = 0;
+	int tmp_2;				int nr = 0;//DEBUG ONLY
 	CircleTable Tabela;
 
-	std::cin >> tmp_2;
+	std::cin >> tmp_2;//			std::cout << "\nx; " << tmp_2;//DEBUG ONLY
 	KONIEC = tmp_2;
 
 	while (KONIEC)
 	{
-		std::cin >> tmp_1;//		std::cout << "\nNR" << ++nr;
+		std::cin >> tmp_1;		//std::cout << "\nNR" << ++nr;//DEBUG ONLY
 
 		if (tmp_1 == "size"){
 			std::cin >> tmp_2;
@@ -173,39 +181,6 @@ int main() {
 //tak na koniec bo bedzie najwiecej zajmowac
 void CircleTable::Porzadkuj(int index)
 {
-	/*
-	int usuniety = index;//do zaznaczenia usunietego
-	//int maxZnaleziony;
-	bool haszSieZgadza;
-
-	index++;
-	if (Tab[index].dane == false){
-		return 0;
-	}
-	else 
-	{
-		while (Tab[index].dane == true) {
-			//sprawdzenie czy hasz sie zgadza
-			if (Haszuj(Tab[index].klucz) == index) {
-				haszSieZgadza = true;
-			}
-			else {
-				haszSieZgadza = false;
-			}
-
-			//jesli sie nie zgadz to wstawia na miejsce usunietego
-			if (Tab[index - 1].dane == false && haszSieZgadza == false) {
-				Tab[index - 1] = Tab[index];
-				Zeruj(index);
-				Porzadkuj(index);
-			}
-			
-		}
-	}
-
-	return 0;
-	-----------------------------------------------*/
-
 	//sprawdza czy hasz sie zgadza
 	//jak nie to jeden do gory
 
