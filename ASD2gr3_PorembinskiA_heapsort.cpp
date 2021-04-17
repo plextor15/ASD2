@@ -1,5 +1,5 @@
 /*
-*
+*	Kopcowanie na podstawie schematu ze strony:
 *	https://eduinf.waw.pl/inf/alg/003_sort/0015.php
 */
 #include <iostream>
@@ -52,7 +52,7 @@ int main() {
 			std::cin >> dane[j];
 			//std::cout << dane[j] << ' '; //DEBUG ONLY!!
 		}
-		std::cout << "\n----------------------\n"; //DEBUG ONLY!!
+		//std::cout << "\n----------------------\n"; //DEBUG ONLY!! Tylko do testowania
 
 		////DEBUG ONLY!!
 		//std::cout << '\n';
@@ -75,12 +75,12 @@ int main() {
 			zamiana(dane, 1, ileDanych-i);
 			kopcowanie(dane, 1, ileDanych-1-i);
 
-			if (1 < ileDanych - i) {
+			if (2 < ileDanych - i) {
 				for (int j = 1; j < ileDanych - i; j++) {
 					std::cout << dane[j] << ' ';
 				}
-			}
 			std::cout << '\n';
+			}
 		}
 
 		//wypisanie posortowanych
