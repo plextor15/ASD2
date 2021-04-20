@@ -7,8 +7,10 @@
 void kopcowanie(long *dane, int start, int end) {
 	long tmp;
 	int a, b;
+	int i = start;
 
-	for (int i = start; i <= end; i++) {
+	while (i <= end) {
+	//for (i <= end; i++) {
 		tmp = dane[i];
 		a = i;
 		b = a / 2;
@@ -19,6 +21,8 @@ void kopcowanie(long *dane, int start, int end) {
 			b = a / 2;
 		}
 		dane[a] = tmp;
+
+		i++;
 	}
 
 	return;
