@@ -56,6 +56,8 @@ bool BruteForce() {
 }
 
 void KR() {
+	Licznik++;
+
 	//wylatywanie znaku
 	char wylatujacy = CiagZPliku[0];
 	CiagZPliku.substr(1);
@@ -77,6 +79,8 @@ void KR() {
 }
 
 int main() {
+	//std::ifstream* Tablica;//tablica z ifstreami, zeby kazdy przypadek testowy mial kursor w pliku na pozycji zerowej
+
 	std::ifstream tenSamPlik;
 	std::string testowanie;
 
@@ -85,6 +89,7 @@ int main() {
 	int hashZPliku;
 
 	std::cin >> LiczbaPrzypadkow;
+	//Tablica = new std::ifstream[LiczbaPrzypadkow];
 	
 	//glowna petla programu
 	while (LiczbaPrzypadkow > 0){
@@ -126,6 +131,7 @@ int main() {
 		//na koniec
 		Plik.close();
 		LiczbaPrzypadkow--;
+		std::cout << " kuniec " << DoZnalezienia << "  " << DlugoscPliku;//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
