@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+//#include <vector>
 
 int LiczbaPrzypadkow;
 std::string DoZnalezienia;
@@ -58,14 +59,43 @@ bool BruteForce() {
 void KR() {
 	Licznik++;
 
+	//FOR DEBUG
+
 	//wylatywanie znaku
 	char wylatujacy = CiagZPliku[0];
-	CiagZPliku.substr(1);
+	//CiagZPliku.substr(1); //warning, waskol piramida wylazl
+	//CiagZPliku = CiagZPliku.substr(1); //nie dziala
+	//CiagZPliku.replace(0, 1, ""); //nie dziala
+	//CiagZPliku.erase(0,1); //nie dziala
+	//CiagZPliku.erase(CiagZPliku.begin()); //nie dziala
+	//CiagZPliku.erase(CiagZPliku.begin(), CiagZPliku.end() - (N - 1));
+	//CiagZPliku.erase(CiagZPliku.begin()); //for debug
 
+	//std::vector<char> hh(N);
+	
 	//przychodzenie znaku
 	char przychodzacy;
 	Plik >> przychodzacy;
+	//CiagZPliku += przychodzacy;
+
+	//skladanie
+	//char* hh = new char(N);
+	//std::string hh = "";
+	//for (int i = 1; i <= N-1; i++){ //od tylu
+	//	//hh[i] = CiagZPliku[i];
+	//	hh += CiagZPliku[i];
+	//}
+	//hh[N - 1] = przychodzacy;
+	//CiagZPliku = hh;
+
+	for (int i = 0; i <= N-2; i++){
+		CiagZPliku[i] = CiagZPliku[i+1];
+	}
+	//CiagZPliku[N - 1] = przychodzacy;
 	CiagZPliku += przychodzacy;
+
+
+std::cout << "\n" << CiagZPliku;//DEBUG ONLY!!
 
 	HzPliku = f(HzPoprzedniego, wylatujacy, przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
 	if (HzPliku == H) {
@@ -86,7 +116,7 @@ int main() {
 
 	std::string NazwaPliku;
 	char charTMP;
-	int hashZPliku;
+	//int hashZPliku;
 
 	std::cin >> LiczbaPrzypadkow;
 	//Tablica = new std::ifstream[LiczbaPrzypadkow];
@@ -129,9 +159,10 @@ int main() {
 		}
 
 		//na koniec
+		CiagZPliku = "";
 		Plik.close();
 		LiczbaPrzypadkow--;
-		std::cout << " kuniec " << DoZnalezienia << "  " << DlugoscPliku;//DEBUG ONLY!!
+		std::cout << " | kuniec " << DoZnalezienia << "  " << NazwaPliku << "  " << DlugoscPliku;//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
