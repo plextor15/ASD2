@@ -6,9 +6,10 @@
 int LiczbaPrzypadkow;
 std::string DoZnalezienia;
 std::string CiagZPliku = "";
+//std::vector<char> CiagZPliku;
 std::ifstream Plik;
 
-const int LP = 23;//157;
+const int LP = 157;//157;
 int N;			//dlugosc wzorca
 int P = 256;	//podstawa systemu dla ASCII
 
@@ -22,10 +23,11 @@ int DlugoscPliku;
 int Suma(std::string ciagZnakow) { //do policzenia hasha
 	int wynik = 0;
 	int tmp = 0;
+	int w = P % LP;
 	//int dlugosc = (int)ciagZnakow.length(); //mozliwe ze size_t
 
 	for (int i = 0; i < N; i++){
-		tmp = (int)ciagZnakow[i] * ((P ^ (N - i - 1)) % LP);
+		tmp = ((int)ciagZnakow[i] * (( w ^ (N - i - 1)) % LP)  ) % LP;
 		wynik += tmp;
 	}
 
@@ -45,7 +47,7 @@ int f(int h, int out, int in) {
 
 bool BruteForce() {
 	bool znalezionoWzorzec = true;
-
+	std::cout << " brute ";//DEBUG ONLY!!
 	for (int i = 1; i < N; i++){
 		if (CiagZPliku[i] != DoZnalezienia[i]) {
 			znalezionoWzorzec = false;
@@ -59,50 +61,25 @@ bool BruteForce() {
 void KR() {
 	Licznik++;
 
-	//FOR DEBUG
-
 	//wylatywanie znaku
 	char wylatujacy = CiagZPliku[0];
-	//CiagZPliku.substr(1); //warning, waskol piramida wylazl
-	//CiagZPliku = CiagZPliku.substr(1); //nie dziala
-	//CiagZPliku.replace(0, 1, ""); //nie dziala
-	//CiagZPliku.erase(0,1); //nie dziala
-	//CiagZPliku.erase(CiagZPliku.begin()); //nie dziala
-	//CiagZPliku.erase(CiagZPliku.begin(), CiagZPliku.end() - (N - 1));
-	//CiagZPliku.erase(CiagZPliku.begin()); //for debug
-
-	//std::vector<char> hh(N);
+	CiagZPliku.erase(CiagZPliku.begin()); //nie dziala - jednak dziala
 	
 	//przychodzenie znaku
 	char przychodzacy;
 	Plik >> przychodzacy;
-	//CiagZPliku += przychodzacy;
-
-	//skladanie
-	//char* hh = new char(N);
-	//std::string hh = "";
-	//for (int i = 1; i <= N-1; i++){ //od tylu
-	//	//hh[i] = CiagZPliku[i];
-	//	hh += CiagZPliku[i];
-	//}
-	//hh[N - 1] = przychodzacy;
-	//CiagZPliku = hh;
-
-	for (int i = 0; i <= N-2; i++){
-		CiagZPliku[i] = CiagZPliku[i+1];
-	}
-	//CiagZPliku[N - 1] = przychodzacy;
 	CiagZPliku += przychodzacy;
 
-
-std::cout << "\n" << CiagZPliku;//DEBUG ONLY!!
-
-	HzPliku = f(HzPoprzedniego, wylatujacy, przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
+	//HzPliku = f(HzPoprzedniego, wylatujacy, przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
+	HzPliku = Suma(CiagZPliku);
 	if (HzPliku == H) {
 		if (BruteForce()) {
+			std::cout << "B";//DEBUG ONLY!!
 			std::cout << Licznik << " ";	//jakby trafil
 		}
 	}
+
+std::cout << "\n" << CiagZPliku << "  " << HzPliku;//DEBUG ONLY!!
 
 	HzPoprzedniego = HzPliku;
 	return;
@@ -148,6 +125,7 @@ int main() {
 		HzPoprzedniego = Suma(CiagZPliku);
 		if (HzPoprzedniego == H){
 			if (BruteForce()) {
+				std::cout << "B";//DEBUG ONLY!!
 				std::cout << Licznik << " ";	//jakby znalazl na pierwszym miejscu
 			}
 		}
@@ -162,7 +140,7 @@ int main() {
 		CiagZPliku = "";
 		Plik.close();
 		LiczbaPrzypadkow--;
-		std::cout << " | kuniec " << DoZnalezienia << "  " << NazwaPliku << "  " << DlugoscPliku;//DEBUG ONLY!!
+		std::cout << " | kuniec " << H << " " << DoZnalezienia << "  " << NazwaPliku << "  " << DlugoscPliku;//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
