@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-//#include <vector>
+#include <math.h>
 
 int LiczbaPrzypadkow;
 std::string DoZnalezienia;
@@ -9,7 +9,7 @@ std::string CiagZPliku = "";
 //std::vector<char> CiagZPliku;
 std::ifstream Plik;
 
-const int LP = 157;//157;
+const int LP = 157;//157    97;
 int N;			//dlugosc wzorca
 int P = 256;	//podstawa systemu dla ASCII
 
@@ -18,16 +18,15 @@ int HzPoprzedniego = 0;
 int HzPliku = -1;	//hash z ciagu z pliku
 int Licznik;	//na ktorej pozycji jest kursor z ifstream w pliku
 int DlugoscPliku;
+int DoPotegi = 0;
 
 
 int Suma(std::string ciagZnakow) { //do policzenia hasha
 	int wynik = 0;
 	int tmp = 0;
-	int w = P % LP;
-	//int dlugosc = (int)ciagZnakow.length(); //mozliwe ze size_t
-
+	
 	for (int i = 0; i < N; i++){
-		tmp = ((int)ciagZnakow[i] * (( w ^ (N - i - 1)) % LP)  ) % LP;
+		tmp = (ciagZnakow[i] * ((int)pow(P, N - i - 1) % LP)) % LP;
 		wynik += tmp;
 	}
 
@@ -36,7 +35,8 @@ int Suma(std::string ciagZnakow) { //do policzenia hasha
 }
 
 int f(int h, int out, int in) {
-	int wynikTMP = ((h - (out * (P ^ (N - 1) % LP)) % LP) * P + in) % LP;
+//std::cout << " | " << x << " | ";//DEBUG ONLY!!
+	int wynikTMP = ((h - (out * DoPotegi) % LP) * P + in) % LP;
 	
 	while (wynikTMP < 0){
 		wynikTMP += LP;
@@ -47,7 +47,7 @@ int f(int h, int out, int in) {
 
 bool BruteForce() {
 	bool znalezionoWzorzec = true;
-	std::cout << " brute ";//DEBUG ONLY!!
+//std::cout << " brute ";//DEBUG ONLY!!
 	for (int i = 1; i < N; i++){
 		if (CiagZPliku[i] != DoZnalezienia[i]) {
 			znalezionoWzorzec = false;
@@ -70,36 +70,45 @@ void KR() {
 	Plik >> przychodzacy;
 	CiagZPliku += przychodzacy;
 
-	//HzPliku = f(HzPoprzedniego, wylatujacy, przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
-	HzPliku = Suma(CiagZPliku);
+	HzPliku = f(HzPoprzedniego, wylatujacy, przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
+	//HzPliku = Suma(CiagZPliku); //DEBUG ONLY!!
 	if (HzPliku == H) {
+//std::cout << " $$ " << HzPliku << "==" << H;//DEBUG ONLY!!
 		if (BruteForce()) {
-			std::cout << "B";//DEBUG ONLY!!
+//std::cout << "B";//DEBUG ONLY!!
 			std::cout << Licznik << " ";	//jakby trafil
 		}
 	}
 
-std::cout << "\n" << CiagZPliku << "  " << HzPliku;//DEBUG ONLY!!
+//std::cout << "\n" << CiagZPliku << "  " << HzPoprzedniego << "  " << HzPliku << " #: " << Suma(CiagZPliku);//DEBUG ONLY!!
 
 	HzPoprzedniego = HzPliku;
 	return;
 }
 
 int main() {
-	//std::ifstream* Tablica;//tablica z ifstreami, zeby kazdy przypadek testowy mial kursor w pliku na pozycji zerowej
+	////DEBUG ONLY!!
+	//char lolxd;
+	//for (size_t i = 0; i < 256; i++)
+	//{
+	//	lolxd = i;
+	//	std::cout << i << ": " << lolxd << "\n";
+	//}
+	//std::cin >> lolxd;
+	////DEBUG ONLY!!
 
 	std::ifstream tenSamPlik;
 	std::string testowanie;
 
 	std::string NazwaPliku;
 	char charTMP;
-	//int hashZPliku;
 
 	std::cin >> LiczbaPrzypadkow;
-	//Tablica = new std::ifstream[LiczbaPrzypadkow];
 	
 	//glowna petla programu
 	while (LiczbaPrzypadkow > 0){
+		//DoPotegi = 0;
+		H = 0;
 		Licznik = 0;
 		std::cin >> NazwaPliku;
 
@@ -116,6 +125,11 @@ int main() {
 		N = DoZnalezienia.length();
 		H = Suma(DoZnalezienia);	//hash do wzorca
 
+		//policzenie P^(N-1)
+		DoPotegi = pow(P, N - 1);
+		DoPotegi = DoPotegi % LP; 
+		
+
 		//poczatkowe zaciagniecie danych z pliku
 		for (size_t i = 0; i < DoZnalezienia.length(); i++) {
 			Plik >> charTMP;
@@ -125,7 +139,7 @@ int main() {
 		HzPoprzedniego = Suma(CiagZPliku);
 		if (HzPoprzedniego == H){
 			if (BruteForce()) {
-				std::cout << "B";//DEBUG ONLY!!
+//std::cout << "B";//DEBUG ONLY!!
 				std::cout << Licznik << " ";	//jakby znalazl na pierwszym miejscu
 			}
 		}
@@ -140,7 +154,7 @@ int main() {
 		CiagZPliku = "";
 		Plik.close();
 		LiczbaPrzypadkow--;
-		std::cout << " | kuniec " << H << " " << DoZnalezienia << "  " << NazwaPliku << "  " << DlugoscPliku;//DEBUG ONLY!!
+//std::cout << " | kuniec " << H << " " << DoZnalezienia << "  " << NazwaPliku << "  " << DlugoscPliku << " |" << DoPotegi;//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
