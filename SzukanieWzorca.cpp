@@ -9,7 +9,7 @@ std::string CiagZPliku = "";
 //std::vector<char> CiagZPliku;
 std::ifstream Plik;
 
-const int LP = 157;//157    97;
+const int LP = 239;//157    97;
 int N;			//dlugosc wzorca
 int P = 256;	//podstawa systemu dla ASCII
 
@@ -28,9 +28,14 @@ int Suma(std::string ciagZnakow) { //do policzenia hasha
 	for (int i = 0; i < N; i++){
 		tmp = (ciagZnakow[i] * ((int)pow(P, N - i - 1) % LP)) % LP;
 		wynik += tmp;
+		//wynik = (wynik + tmp) % LP;
+	}
+	wynik = wynik % LP;
+
+	while (wynik < 0){
+		wynik += LP;
 	}
 
-	wynik = wynik % LP;
 	return wynik;
 }
 
@@ -67,10 +72,10 @@ void KR() {
 	
 	//przychodzenie znaku
 	char przychodzacy;
-	Plik >> przychodzacy;
+	Plik >> std::noskipws >> przychodzacy;
 	CiagZPliku += przychodzacy;
 
-	HzPliku = f(HzPoprzedniego, wylatujacy, przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
+	HzPliku = f(HzPoprzedniego, (int)wylatujacy, (int)przychodzacy);	//obliczanie hasha dla aktualnie wyciagnietego
 	//HzPliku = Suma(CiagZPliku); //DEBUG ONLY!!
 	if (HzPliku == H) {
 //std::cout << " $$ " << HzPliku << "==" << H;//DEBUG ONLY!!
@@ -78,9 +83,12 @@ void KR() {
 //std::cout << "B";//DEBUG ONLY!!
 			std::cout << Licznik << " ";	//jakby trafil
 		}
+		
+//else { std::cout << "X "; } //DEBUG ONLY!!
 	}
 
-//std::cout << "\n" << CiagZPliku << "  " << HzPoprzedniego << "  " << HzPliku << " #: " << Suma(CiagZPliku);//DEBUG ONLY!!
+//std::cout << "\n" << CiagZPliku << "  in/out " << przychodzacy << "/" << wylatujacy << "  " << (int)przychodzacy << "/" << (int)wylatujacy << "  ";
+//std::cout << ", " << CiagZPliku << "  " << HzPoprzedniego << "  " << HzPliku << " #: " << Suma(CiagZPliku);//DEBUG ONLY!!
 
 	HzPoprzedniego = HzPliku;
 	return;
@@ -114,25 +122,32 @@ int main() {
 
 		//sprawdzenie jakiej dlugosci jest plik
 		tenSamPlik.open(NazwaPliku);
-		tenSamPlik >> testowanie;
+		//tenSamPlik >> std::noskipws >> testowanie;	//debug
+		std::getline(tenSamPlik, testowanie);
+//std::cout << testowanie; std::cin >> NazwaPliku; //DEBUG ONLY!!
 		DlugoscPliku = (int)testowanie.length();
 		tenSamPlik.close();
 		//koniec sprawdzania dlugosci
 
 		Plik.open(NazwaPliku);
 
-		std::cin >> DoZnalezienia;
+		//std::cin >> DoZnalezienia;
+		//std::cin >> std::noskipws >> DoZnalezienia;
+		std::getline(std::cin, DoZnalezienia); //chyba nie dziala
+		std::getline(std::cin, DoZnalezienia); //chyba nie dziala
 		N = DoZnalezienia.length();
 		H = Suma(DoZnalezienia);	//hash do wzorca
 
 		//policzenie P^(N-1)
-		DoPotegi = pow(P, N - 1);
+		DoPotegi = (int)pow(P, N - 1);
 		DoPotegi = DoPotegi % LP; 
-		
+		if (DoPotegi < 0){
+			DoPotegi += LP;
+		}
 
 		//poczatkowe zaciagniecie danych z pliku
 		for (size_t i = 0; i < DoZnalezienia.length(); i++) {
-			Plik >> charTMP;
+			Plik >> std::noskipws >> charTMP;
 			CiagZPliku.push_back(charTMP);
 		}
 		// i policzenie hasha
@@ -154,7 +169,7 @@ int main() {
 		CiagZPliku = "";
 		Plik.close();
 		LiczbaPrzypadkow--;
-//std::cout << " | kuniec " << H << " " << DoZnalezienia << "  " << NazwaPliku << "  " << DlugoscPliku << " |" << DoPotegi;//DEBUG ONLY!!
+std::cout << " | kuniec " << H << "|_" << DoZnalezienia << "_| " << NazwaPliku << "-" << DlugoscPliku << " |" << DoPotegi;//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
