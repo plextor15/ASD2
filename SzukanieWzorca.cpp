@@ -9,7 +9,7 @@ std::string CiagZPliku = "";
 //std::vector<char> CiagZPliku;
 std::ifstream Plik;
 
-const int LP = 239;//157    97;
+const int LP = 227;//157    97;
 int N;			//dlugosc wzorca
 int P = 256;	//podstawa systemu dla ASCII
 
@@ -21,29 +21,74 @@ int DlugoscPliku;
 int DoPotegi = 0;
 
 
-int Suma(std::string ciagZnakow) { //do policzenia hasha
-	int wynik = 0;
-	int tmp = 0;
-	
-	for (int i = 0; i < N; i++){
-		tmp = (ciagZnakow[i] * ((int)pow(P, N - i - 1) % LP)) % LP;
-		wynik += tmp;
+//int Suma(std::string ciagZnakow) { //do policzenia hasha
+//	long long wynik = 0;
+//	long long tmp = 0;
+//	for (int i = 0; i < N; i++){
+//		tmp = (ciagZnakow[i] * ((int)pow(P, N - i - 1))) % LP;
+//		std::cout << "\n  " << ciagZnakow[i] << "  256^" << i;	//DEBUG ONLY!!
+//		wynik += tmp;
+//		//wynik = (wynik + tmp) % LP;
+//	}
+//	wynik = wynik % LP;
+//	while (wynik < 0){
+//		wynik += LP;
+//	}
+//	return (int)wynik;
+//}
+
+int power_modulo_fast(int a, int b)
+//http://www.algorytm.org/przetwarzanie-tekstu/algorytm-kr-karpa-rabina/kr-c.html
+//funkcja podnoszaca do potegi
+//(c)2006 Tomasz Lubinski
+{
+	int i;
+	int result = 1;
+	long int x = a % LP;
+
+	for (i = 1; i <= b; i <<= 1)
+	{
+		x %= LP;
+		if ((b & i) != 0)
+		{
+			result *= x;
+			result %= LP;
+		}
+		x *= x;
+	}
+
+	return result % LP;
+}
+
+int Suma(std::string ciagZnakow) { //do policzenia hasha			//DOBRE
+	long long wynik = 0;
+	long long tmp = 0;
+
+//std::cout << "\n ------ " << N << " -----";	//DEBUG ONLY!!
+	for (int i = N-1; i >= 0; i--){
+		//tmp = ((long long)pow(P,i) % LP);
+		tmp = ((long long)power_modulo_fast(P, i) % LP);
+		tmp = (tmp * (int)ciagZnakow[N - 1 - i]) % LP;
+//std::cout << "\n  " << ciagZnakow[N-1-i] << "  256^" << i << " = " << (int)ciagZnakow[N - 1 - i];	//DEBUG ONLY!!
 		//wynik = (wynik + tmp) % LP;
+		wynik = wynik + tmp;
 	}
 	wynik = wynik % LP;
-
-	while (wynik < 0){
+	while (wynik < 0) {
 		wynik += LP;
 	}
-
-	return wynik;
+//std::cout << "\n ------ " << wynik << " -----";	//DEBUG ONLY!!
+	return (int)wynik;
 }
 
 int f(int h, int out, int in) {
 //std::cout << " | " << x << " | ";//DEBUG ONLY!!
-	int wynikTMP = ((h - (out * DoPotegi) % LP) * P + in) % LP;
-	
+	int wynikTMP = ((((h - (out * DoPotegi) % LP) * P) % LP) + in) % LP;
+	//long long wynikTMP = ((long long)h - (long long)out * (long long)DoPotegi) * (long long)P + (long long)in;
+	//wynikTMP = wynikTMP % (long long)LP;
+
 	while (wynikTMP < 0){
+		//wynikTMP = wynikTMP + (long long)LP;
 		wynikTMP += LP;
 	}
 
@@ -81,14 +126,15 @@ void KR() {
 //std::cout << " $$ " << HzPliku << "==" << H;//DEBUG ONLY!!
 		if (BruteForce()) {
 //std::cout << "B";//DEBUG ONLY!!
-			std::cout << Licznik << " ";	//jakby trafil
+			//std::cout << Licznik << " ";	//jakby trafil
+std::cout << " [" << Licznik << "] ";	//DEBUG ONLY!!
 		}
 		
 //else { std::cout << "X "; } //DEBUG ONLY!!
 	}
 
-//std::cout << "\n" << CiagZPliku << "  in/out " << przychodzacy << "/" << wylatujacy << "  " << (int)przychodzacy << "/" << (int)wylatujacy << "  ";
-//std::cout << ", " << CiagZPliku << "  " << HzPoprzedniego << "  " << HzPliku << " #: " << Suma(CiagZPliku);//DEBUG ONLY!!
+std::cout << "\n" << CiagZPliku << "  in/out " << przychodzacy << "/" << wylatujacy << "  " << (int)przychodzacy << "/" << (int)wylatujacy << "  ";
+std::cout << ", " << HzPoprzedniego << "  " << HzPliku << "   #:" << Suma(CiagZPliku);//DEBUG ONLY!!
 
 	HzPoprzedniego = HzPliku;
 	return;
@@ -139,11 +185,15 @@ int main() {
 		H = Suma(DoZnalezienia);	//hash do wzorca
 
 		//policzenie P^(N-1)
-		DoPotegi = (int)pow(P, N - 1);
-		DoPotegi = DoPotegi % LP; 
+		//DoPotegi = (int)pow(P, N - 1);
+		long long uiop = power_modulo_fast(P, N - 1);
+		uiop = uiop % LP;
+		DoPotegi = (int)uiop;
+		//DoPotegi = DoPotegi % LP; 
 		if (DoPotegi < 0){
 			DoPotegi += LP;
 		}
+		std::cout << "\n" << N << "<" << DoPotegi << ">" << P << "\n\n";
 
 		//poczatkowe zaciagniecie danych z pliku
 		for (size_t i = 0; i < DoZnalezienia.length(); i++) {
@@ -158,6 +208,8 @@ int main() {
 				std::cout << Licznik << " ";	//jakby znalazl na pierwszym miejscu
 			}
 		}
+
+//std::cout << "\n  1. " << CiagZPliku << "  #: " << HzPoprzedniego << "\n";	//DEBUG ONLY!!
 		
 		//przesuwanie sie po pliku
 		int tmpInt = DlugoscPliku - N;
@@ -169,7 +221,7 @@ int main() {
 		CiagZPliku = "";
 		Plik.close();
 		LiczbaPrzypadkow--;
-std::cout << " | kuniec " << H << "|_" << DoZnalezienia << "_| " << NazwaPliku << "-" << DlugoscPliku << " |" << DoPotegi;//DEBUG ONLY!!
+std::cout << "\n |END " << H << "|_" << DoZnalezienia << "_| " << NazwaPliku << "-" << DlugoscPliku << " |" << DoPotegi << " :" << N << "\n\n";//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
