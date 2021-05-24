@@ -21,22 +21,6 @@ int DlugoscPliku;
 int DoPotegi = 0;
 
 
-//int Suma(std::string ciagZnakow) { //do policzenia hasha
-//	long long wynik = 0;
-//	long long tmp = 0;
-//	for (int i = 0; i < N; i++){
-//		tmp = (ciagZnakow[i] * ((int)pow(P, N - i - 1))) % LP;
-//		std::cout << "\n  " << ciagZnakow[i] << "  256^" << i;	//DEBUG ONLY!!
-//		wynik += tmp;
-//		//wynik = (wynik + tmp) % LP;
-//	}
-//	wynik = wynik % LP;
-//	while (wynik < 0){
-//		wynik += LP;
-//	}
-//	return (int)wynik;
-//}
-
 int power_modulo_fast(int a, int b)
 //http://www.algorytm.org/przetwarzanie-tekstu/algorytm-kr-karpa-rabina/kr-c.html
 //funkcja podnoszaca do potegi
@@ -126,15 +110,15 @@ void KR() {
 //std::cout << " $$ " << HzPliku << "==" << H;//DEBUG ONLY!!
 		if (BruteForce()) {
 //std::cout << "B";//DEBUG ONLY!!
-			//std::cout << Licznik << " ";	//jakby trafil
-std::cout << " [" << Licznik << "] ";	//DEBUG ONLY!!
+			std::cout << Licznik << " ";	//jakby trafil
+//std::cout << "     [[ " << Licznik << " ]] ";	//DEBUG ONLY!!
 		}
 		
 //else { std::cout << "X "; } //DEBUG ONLY!!
 	}
 
-std::cout << "\n" << CiagZPliku << "  in/out " << przychodzacy << "/" << wylatujacy << "  " << (int)przychodzacy << "/" << (int)wylatujacy << "  ";
-std::cout << ", " << HzPoprzedniego << "  " << HzPliku << "   #:" << Suma(CiagZPliku);//DEBUG ONLY!!
+//std::cout << "\n" << CiagZPliku << "  in/out " << przychodzacy << "/" << wylatujacy << "  " << (int)przychodzacy << "/" << (int)wylatujacy << "  ";
+//std::cout << ", " << HzPoprzedniego << "  " << HzPliku << "   #:" << Suma(CiagZPliku);//DEBUG ONLY!!
 
 	HzPoprzedniego = HzPliku;
 	return;
@@ -193,7 +177,7 @@ int main() {
 		if (DoPotegi < 0){
 			DoPotegi += LP;
 		}
-		std::cout << "\n" << N << "<" << DoPotegi << ">" << P << "\n\n";
+//std::cout << "\n" << N << "<" << DoPotegi << ">" << P << "\n\n";
 
 		//poczatkowe zaciagniecie danych z pliku
 		for (size_t i = 0; i < DoZnalezienia.length(); i++) {
@@ -221,7 +205,7 @@ int main() {
 		CiagZPliku = "";
 		Plik.close();
 		LiczbaPrzypadkow--;
-std::cout << "\n |END " << H << "|_" << DoZnalezienia << "_| " << NazwaPliku << "-" << DlugoscPliku << " |" << DoPotegi << " :" << N << "\n\n";//DEBUG ONLY!!
+//std::cout << "\n |END " << H << "|_" << DoZnalezienia << "_| " << NazwaPliku << "-" << DlugoscPliku << " |" << DoPotegi << " :" << N << "\n\n";//DEBUG ONLY!!
 		std::cout << "\n";
 	}
 
