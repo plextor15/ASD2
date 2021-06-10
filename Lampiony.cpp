@@ -25,7 +25,7 @@ int main() {
 		std::cout << "\n\n" << IloczynWektor(A, B, C) << "\n\n";
 	}*/
 
-std::cout << "DEBUG 01\n ";
+//std::cout << "DEBUG 01\n ";
 	std::vector<coord> Male, Duze;
 	int maleLampiony, duzeLampiony;
 	//long long x, y;
@@ -35,7 +35,7 @@ std::cout << "DEBUG 01\n ";
 	long long wartX = 0, wartY = 0;
 
 	std::cin >> duzeLampiony;
-std::cout << "DEBUG 02\n ";
+//std::cout << "DEBUG 02\n ";
 	for (int i = 0; i < duzeLampiony; i++) {
 		std::cin >> TMPcoord.X >> TMPcoord.Y;
 		TMPcoord.znacznik = true;
@@ -52,20 +52,20 @@ std::cout << "DEBUG 02\n ";
 			}
 		}
 	}
-std::cout << "DEBUG 03\n ";
+//std::cout << "DEBUG 03\n ";
 	std::cin >> maleLampiony;
-	std::cout << "\n  " << duzeLampiony << " , " << maleLampiony;//DEBUG ONLY!!
+	//std::cout << "\n  " << duzeLampiony << " , " << maleLampiony;//DEBUG ONLY!!
 
-std::cout << "\nDEBUG 04\n ";
+//std::cout << "\nDEBUG 04\n ";
 	for (int i = 0; i < maleLampiony; i++) {
 		std::cin >> TMPcoord.X >> TMPcoord.Y;
 		TMPcoord.znacznik = true;
 		Male.push_back(TMPcoord);
 		
-		std::cout << "\n  " << TMPcoord.X << " , " << TMPcoord.Y;//DEBUG ONLY!!
+		//std::cout << "\n  " << TMPcoord.X << " , " << TMPcoord.Y;//DEBUG ONLY!!
 	}
-std::cout << "\nDEBUG 05\n ";
-	std::cout << "\n  " << duzeLampiony << " , " << maleLampiony << "\n\n";//DEBUG ONLY!!
+//std::cout << "\nDEBUG 05\n ";
+	//std::cout << "\n  " << duzeLampiony << " , " << maleLampiony << "\n\n";//DEBUG ONLY!!
 
 
 	std::vector<coord> hull;
@@ -92,11 +92,11 @@ std::cout << "\nDEBUG 05\n ";
 	} while (p != l); //if didn't reached the first point
 
 
-std::cout << "DEBUG 07\n ";
-	for (size_t i = 0; i < hull.size(); i++) {
-		std::cout << "(" << hull[i].X << ", " << hull[i].Y << ")\n";
-	}
-std::cout << "DEBUG 08\n ";
+//std::cout << "DEBUG 07\n ";
+	//for (size_t i = 0; i < hull.size(); i++) {
+	//	std::cout << "(" << hull[i].X << ", " << hull[i].Y << ")\n";
+	//}
+//std::cout << "DEBUG 08\n ";
 	int ileBokow = hull.size();
 	int a, b;
 	for (int i = 0; i < ileBokow; i++){
@@ -118,15 +118,16 @@ std::cout << "DEBUG 08\n ";
 		}
 		//std::cout << "\n";
 	}
-std::cout << "DEBUG 09\n ";
+//std::cout << "DEBUG 09\n ";
 	int licznik = 0;
 	for (size_t j = 0; j < Male.size(); j++) {
 		if (Male[j].znacznik){
 			licznik = licznik + 1;
 		}
 	}
-std::cout << "DEBUG 10\n ";
-	std::cout << "\n\n Wynik to: " << licznik;//DEBUG ONLY!!
+//std::cout << "DEBUG 10\n ";
+	//std::cout << "\n\n Wynik to: " << licznik;//DEBUG ONLY!!
+	std::cout << licznik;
 
 	return 0;
 }
