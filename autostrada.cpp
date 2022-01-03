@@ -7,19 +7,36 @@
 
 const int LiczbaSymulacji = 10; //finalnie 2000
 const double pi = 3.14159265358979323846;
+double CalkowityCzasJazdy = 0;
 
 double Los01()
 {
 	return (1.0 * rand()) / RAND_MAX;
 }
 
-//double LosDyskretna(int max)
-//{
-//	double r = Los01();
-//	int j = rand() % max;
-//
-//	return;
-//}
+double LosDyskretna(int max, double tab[])
+{
+	double r;
+	int j;
+	bool check;
+
+	do
+	{
+		r = Los01();
+		j = rand() % max;
+		if (r <= tab[j])
+		{
+			return j;	//max tyle postojow ile prawdopodob w tabeli
+			//check = false;
+		}
+		else
+		{
+			check = true;
+		}
+	} while (check);
+
+	return;
+}
 
 double N01_BM(double my, double sigma)	//rozkaad N(0,1) – metoda Boxa-Millera
 {
@@ -76,6 +93,11 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 
 	const int ileBramek = 4;
 
+
+
+	double GestoscRuchu;
+	double maxGestoscRuchu = 0.5; //polowa mozliwej predkosci
+
 	//do dyskretnej
 	int j;
 	double r;
@@ -90,43 +112,59 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 	{
 		//WYJAZD Z MIASTA
 		//losowanie dyskretne pory dnia
-		do
-		{
-			r = Los01();
-			j = rand() % ilePoryDnia;
-			if (r <= PrawdopodPoraDnia[j])
-			{
-				PoraWyjazdu = j;	//max tyle postojow ile prawdopodob w tabeli
-				check = false;
-			}
-			else
-			{
-				check = true;
-			}
-		} while (check);
+
+		//do
+		//{
+		//	r = Los01();
+		//	j = rand() % ilePoryDnia;
+		//	if (r <= PrawdopodPoraDnia[j])
+		//	{
+		//		PoraWyjazdu = j;	//max tyle postojow ile prawdopodob w tabeli
+		//		check = false;
+		//	}
+		//	else
+		//	{
+		//		check = true;
+		//	}
+		//} while (check);
+		PoraWyjazdu = LosDyskretna(ilePoryDnia, PrawdopodPoraDnia);
 
 		WielkoscKorkow = Los01();
 		CzasNaBramce = Los01() * maxCzasNaBramce;
 
 		CzasWyjazdu = ( (-(1-maxKorek)*WielkoscKorkow+1) * SzybkoscPoraDnia_miasto[PoraWyjazdu]) * KmDoAutostrady + CzasNaBramce;
 
+		//JAZDA PO AUTOSTRADZIE
+		//tiry
+
+		//pogoda
+
+		//styl jazdy
+
+
+		//BRAMKI DO OPLAT
+
+
+
 		//POSTOJE
 		PostojeCzasCalkowity = 0;
 		//ilosc postojow losowana z rozkladu zmiennej dyskretnej
-		do
-		{
-			r = Los01();
-			j = rand() % maxPostojow;
-			if (r <= TabProbPostojow[j])
-			{
-				ilePostojow = j;	//max tyle postojow ile prawdopodob w tabeli
-				check = false;
-			}
-			else
-			{
-				check = true;
-			}
-		} while (check);
+		
+		//do
+		//{
+		//	r = Los01();
+		//	j = rand() % maxPostojow;
+		//	if (r <= TabProbPostojow[j])
+		//	{
+		//		ilePostojow = j;	//max tyle postojow ile prawdopodob w tabeli
+		//		check = false;
+		//	}
+		//	else
+		//	{
+		//		check = true;
+		//	}
+		//} while (check);
+		ilePostojow = LosDyskretna(maxPostojow, TabProbPostojow);
 
 		//co bedzie robione na kazdym postoju
 		for (size_t i = 0; i < ilePostojow; i++)
@@ -162,23 +200,19 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 			}
 			PostojeCzasCalkowity += 2;	//np: zaparkowanie
 			//std::cout << "Czas zjedzenia: " << CzasZjedzenia << "\n";	//FOR DEBUG ONLY!!! 
+
+
+			//WJAZD Z MIASTA
+			//pora dnia wjazdu
+			PoraWjazdu = (PoraWyjazdu + 2) % ilePoryDnia;
+
+
 		}
 		//std::cout << "calkowity czas: " << PostojeCzasCalkowity << " w tym - " << ilePostojow << "\n\n\n";	//FOR DEBUG ONLY!!!
 
-	//BRAMKI DO OPLAT
-
-
 
 	}
-	//wyjazd z miasta
 
-	//jazda autostrada
-
-	//bramki do oplat
-
-
-
-	//wjazd do miasta
 
 	wynikowy.close();
 	return 0;
