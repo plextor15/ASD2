@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-const int LiczbaSymulacji = 1000; //finalnie 2000
+const int LiczbaSymulacji = 5000; //finalnie 2000
 const double pi = 3.14159265358979323846;
+const double OdlegloscCalkowita = 500; // 500 km
 double CalkowityCzasJazdy;
 
 double Los01()
@@ -88,7 +89,7 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 	// ok 8 i ok 16 = 4h 30km/h - 0.6
 
 	int PoraWyjazdu, PoraWjazdu;
-	double CzasWyjazdu, CzasWjazdu;
+	double CzasWyjazdu = 0, CzasWjazdu = 0;
 	
 	double WielkoscKorkow;
 	const double maxKorek = 0.1;	//np: 5km/h dla 50km/h
@@ -101,7 +102,7 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 	int RodzajPogody;
 	double PredkoscPogoda;
 
-	const double PredkoscNaAutostradzie = 2.33;
+	const double PredkoscNaAutostradzie = 2.33; // km/min
 	const int ileStylJazdy = 2; //szybka, ekonomiczna
 	double PrawdopodStylJazdy[ileStylJazdy] = { 0.6, 0.4 };
 	double PredkoscStylJazdy[ileStylJazdy] = { 1, 0.8 };
@@ -113,7 +114,7 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 	double PredkoscBoTiry; // to nie jest prekosc tirow, tylko % max predkosci jakby ich nie bylo
 
 	double PredkoscWynikowa; // % max predkosci jaka moze byc
-	double PredkoscJazdyAutostrada;
+	//double PredkoscJazdyAutostrada;
 	double CzasJazdyAutostrada;
 
 
@@ -131,20 +132,14 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 	bool czyToaleta;
 	double CzasWToalecie = 3.5;
 	double CzasZjedzenia;
-	double maxCzasZjedzenia;
+	//double maxCzasZjedzenia;
 	double PrawdopodobZjedzeniaCzegos = 0.4;
 	double myZjedzenia = 3, sigmaZjedzenia = 0.65; //N(0,2) Boxa-Mullera
-
 
 
 	double GestoscRuchu;
 	double maxGestoscRuchu = 0.5; //polowa mozliwej predkosci
 
-	//do dyskretnej
-	//int j;
-	//double r;
-	//metoda Boxa-Millera
-	//double u1, u2, R, Th, z1, z2;
 
 	std::ofstream wynikowy;
 	wynikowy.open("wynikowy.txt");
@@ -162,6 +157,8 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 		CzasWyjazdu = ((-(1 - maxKorek) * WielkoscKorkow + 1) * SzybkoscPoraDnia_miasto[PoraWyjazdu]) * KmDoAutostrady + CzasNaBramce;
 
 		//JAZDA PO AUTOSTRADZIE
+		PredkoscWynikowa = 0;
+
 		RodzajPogody = LosDyskretna(ileRodzajePogody, PrawdopodRodzajPogody);
 		PredkoscPogoda = PredkoscRodzajPogody[RodzajPogody];
 		StylJazdy = LosDyskretna(ileStylJazdy, PrawdopodStylJazdy);
@@ -169,21 +166,18 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 		iloscTirow = Los01();
 		PredkoscBoTiry = 1 - (1-minPredkoscBoTiry) * iloscTirow;
 
-		/*if (PredkoscPogoda > PredkoscStylu)
+		if (PredkoscPogoda > PredkoscStylu)
 		{
-			PredkoscPogoda = PredkoscStylu;
+			PredkoscWynikowa = PredkoscStylu;
+		}
+		else
+		{
+			PredkoscWynikowa = PredkoscPogoda;
 		}
 
-		if (PredkoscPogoda > PredkoscBoTiry)
-		{
-			PredkoscPogoda = PredkoscBoTiry;
-		}*/
-		if (true)
-		{
-
-		}
+		PredkoscWynikowa *= PredkoscBoTiry;
 		
-		CzasJazdyAutostrada = 0 * 0;
+		CzasJazdyAutostrada = OdlegloscCalkowita / (PredkoscWynikowa * PredkoscNaAutostradzie);
 
 		//BRAMKI DO OPLAT
 		tmp = 0;
@@ -194,7 +188,6 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 			tmp = abs(tmp);
 			tmp *= maxCzasNaBramce;
 			CalkowityCzasBramek += tmp;
-			//CzasNaBramce += 0.2; //czas na obsluzenie nas
 		}
 
 
@@ -239,12 +232,12 @@ int main()	//wszystkie czasy w minutach, odleglosci w kilometrach
 		//WJAZD Z MIASTA
 		PoraWjazdu = (PoraWyjazdu + 2) % ilePoryDnia; //finalnie moze byc inaczej liczone
 		GestoscRuchu = RozkladTrojkatny(0, 1);
-		//CzasWjazdu = ((-(1 - maxGestoscRuchu) * GestoscRuchu + 1) * SzybkoscPoraDnia_miasto[PoraWjazdu]) * KmDoAutostrady;
+		CzasWjazdu = ((-(1 - maxGestoscRuchu) * GestoscRuchu + 1) * SzybkoscPoraDnia_miasto[PoraWjazdu]) * KmDoAutostrady;
 
-		//CalkowityCzasJazdy = CzasWyjazdu + CalkowityCzasBramek + PostojeCzasCalkowity + CzasWjazdu;
+		CalkowityCzasJazdy = CzasWyjazdu + CzasJazdyAutostrada + CalkowityCzasBramek + PostojeCzasCalkowity + CzasWjazdu;
 		//std::cout << "\n" << CalkowityCzasJazdy << "\n"; //FOR DEBUG ONLY!!!
+		wynikowy << CalkowityCzasJazdy << "\n";
 	}
-
 
 	wynikowy.close();
 	return 0;
